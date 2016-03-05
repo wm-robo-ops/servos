@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <limits.h>
+#include <unistd.h>
 
 int main (int argc, char *argv[])
 {
@@ -12,8 +13,8 @@ int main (int argc, char *argv[])
 		exit(1);
 	}
 	
-	//Servos on pins 4 and 7
-	int pan_servo = 4, tilt_servo = 7;
+	//Servos on pins 24 and 23
+	int pan_servo = 23, tilt_servo = 24;
 
 	long int pan, tilt;
 	char *extra;
@@ -56,10 +57,31 @@ int main (int argc, char *argv[])
 	
 	else
 	{
+		if (set_mode(pi, pan_servo, PI_OUTPUT) != 0)
+		{
+			fprintf(stderr, "Error setting mode");
+			exit(1);
+		}
+		if (set_mode(pi, tilt_servo, PI_OUTPUT) != 0)
+		{
+			fprintf(stderr, "Error setting mode");
+			exit(1);
+		}
 		long int pan_ang = (2000*pan)/180 + 500;
 		long int tilt_ang = (2000*tilt)/180 + 500;
-		set_servo_pulsewidth(pi, pan_servo, pan_ang);
-		set_servo_pulsewidth(pi, tilt_servo, tilt_ang);
+		if (set_servo_pulsewidth(pi, pan_servo, pan_ang) != 0)
+		{
+			fprintf(stderr, "Error setting pulsewidth");
+			exit(1);
+		}
+		if (set_servo_pulsewidth(pi, tilt_servo, tilt_ang) != 0)
+		{
+			fprintf(stderr, "Error setting pulsewidth");
+			exit(1);
+		}
+		sleep(1);
+		set_servo_pulsewidth(pi, pan_servo, 0);
+		set_servo_pulsewidth(pi, tilt_servo, 0);
 		pigpio_stop(pi);
 		return 0;
 	}
