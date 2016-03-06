@@ -19,6 +19,6 @@ sudo make install
 
 ```
 sudo pigpiod
-gcc -Wall -pthread -o setPos setPos.c -lpigpiod_if2 -lrt
+make
 ./setPos pan_ang tilt_ang
 ```
